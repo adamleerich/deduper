@@ -61,24 +61,17 @@ def hashfile(fpath):
 # Recursively iterate over the directory to get all files
 # https://www.sethserver.com/python/recursively-list-files.html
 dirlist = [indir]
-files = []
 while len(dirlist) > 0:
     for (dirpath, dirnames, filenames) in os.walk(dirlist.pop()):
         for dirname in dirnames:
             if file_is_hidden(os.path.join(dirpath, dirname)):
                 dirnames.remove(dirname)
         for filename in filenames:
-            if file_is_hidden(os.path.join(dirpath, filename)):
-                filenames.remove(filename)
+            filepath = os.path.abspath(os.path.join(dirpath, filename))
+            if not file_is_hidden(filepath):
+                print(filepath + '\t' + hashfile(filepath))
         dirlist.extend(dirnames)
-        files.extend(map(
-            lambda n: os.path.abspath(os.path.join(*n)),
-            zip([dirpath] * len(filenames), filenames)
-        ))
-
-
-for f in files:
-    print(f + '\t' + hashfile(f))
+        
 
 
 # dbconn.close()
